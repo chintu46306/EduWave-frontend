@@ -1,10 +1,14 @@
-import './App.css'
+import './App.css';
+
+import {Routes} from 'react-router-dom';
 
 function App() {
 
   return (
     <>
-    EduWave
+      <Routes>
+        {/* <Route path = "/" element= {<Home/>}></Routes> */}
+      </Routes>
     </>
   )
 }
