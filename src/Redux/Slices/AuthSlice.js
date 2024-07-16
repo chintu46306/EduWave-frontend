@@ -1,4 +1,4 @@
-import { createSlice} from "@reduxjx/toolkit";
+import { createSlice} from "@reduxjs/toolkit";
 
 const initialState = {
     isLoggedIn: localStorage.getItem('isLoggedIn') || false,
