@@ -16,11 +16,13 @@ export const getCourseLectures = createAsyncThunk("/course/lecture/get", async (
             success: "Lectures fetched successfully",
             error: "Failed to load the lectures"
         });
-        return (await response).data;
+        return (await response).data;  // Return the response data directly
     } catch(error) {
         toast.error(error?.response?.data?.message);
+        throw error;  // Throw the error so Redux can handle it
     }
 });
+
 
 export const addCourseLecture = createAsyncThunk("/course/lecture/add", async (data) => {
     try {
@@ -62,14 +64,19 @@ const lectureSlice = createSlice({
     initialState,
     reducers: {},
     extraReducers: (builder) => {
-        builder.addCase(getCourseLectures.fulfilled, (state, action) => {
+        builder
+        .addCase(getCourseLectures.fulfilled, (state, action) => {
             console.log(action);
-            state.lectures = action?.payload?.lectures;
+            console.log("Reducer received payload:", action.payload);
+            state.lectures = action?.payload?.lecture;
         })
         .addCase(addCourseLecture.fulfilled, (state, action) => {
             console.log(action);
-            state.lectures = action?.payload?.course?.lectures;
+            state.lectures = action?.payload?.course?.lecture;
         })
+        .addCase(deleteCourseLecture.fulfilled, (state, action) => {
+            state.lectures = action?.payload?.course?.lectures;
+        });
     }
 });
 

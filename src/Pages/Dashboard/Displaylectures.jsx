@@ -6,26 +6,32 @@ import HomeLayout from "../../Layouts/HomeLayout";
 import { deleteCourseLecture, getCourseLectures } from "../../Redux/Slices/LectureSlice";
 
 function Displaylectures() {
-
     const navigate = useNavigate();
     const dispatch = useDispatch();
     const {state} = useLocation();
-    const {lectures} = useSelector((state) => state.lecture);
+    const lectureState = useSelector((state) => state.lecture);
     const {role} = useSelector((state) => state.auth);
 
     const [currentVideo, setCurrentVideo] = useState(0);
 
     async function onLectureDelete(courseId, lectureId) {
-        console.log(courseId, lectureId);
         await dispatch(deleteCourseLecture({courseId: courseId, lectureId: lectureId}));
         await dispatch(getCourseLectures(courseId));
     }
 
     useEffect(() => {
-        console.log(state);
         if(!state) navigate("/courses");
+        console.log("Dispatching getCourseLectures with ID:", state._id);
         dispatch(getCourseLectures(state._id));
     }, []);
+
+    useEffect(()=>{
+        console.log("Complete lecture state:", lectureState);
+        console.log("Lectures array:", lectureState.lectures);
+        console.log(lectureState.lectures)
+    },[lectureState])
+
+
 
     return (
         <HomeLayout>
@@ -34,12 +40,12 @@ function Displaylectures() {
                     Course Name: {state?.title}
                 </div>
 
-                {(lectures && lectures.length > 0 ) ?  
+                {(lectureState.lectures && lectureState.lectures.length > 0 ) ?  
                     (<div className="flex justify-center gap-10 w-full">
                     {/* left section for playing videos and displaying course details to admin */}
                    <div className="space-y-5 w-[28rem] p-2 rounded-lg shadow-[0_0_10px_black]">
                         <video 
-                            src={lectures && lectures[currentVideo]?.lecture?.secure_url}
+                            src={lectureState.lectures && lectureState.lectures[currentVideo]?.lecture?.secure_url}
                             className="object-fill rounded-tl-lg rounded-tr-lg w-full"   
                             controls
                             disablePictureInPicture
@@ -52,13 +58,13 @@ function Displaylectures() {
                             <h1>
                                 <span className="text-yellow-500"> Title: {" "}
                                 </span>
-                                {lectures && lectures[currentVideo]?.title}
+                                {lectureState.lectures && lectureState.lectures[currentVideo]?.title}
                             </h1>
                             <p>
                                 <span className="text-yellow-500 line-clamp-4">
                                     Description: {" "}
                                 </span>
-                                {lectures && lectures[currentVideo]?.description}
+                                {lectureState.lectures && lectureState.lectures[currentVideo]?.description}
                             </p>
                         </div>
                    </div>
@@ -73,8 +79,8 @@ function Displaylectures() {
                                 </button>
                             )}
                         </li> 
-                        {lectures && 
-                            lectures.map((lecture, idx) => {
+                        {lectureState.lectures && 
+                            lectureState.lectures.map((lecture, idx) => {
                                 return (
                                     <li className="space-y-2" key={lecture._id} >
                                         <p className="cursor-pointer" onClick={() => setCurrentVideo(idx)}>
